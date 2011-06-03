@@ -1,4 +1,7 @@
 // Fake accelerometer data generator
+// Jiva N. Bagale
+// jnbagale@gmail.com 
+// 2010
 
 #include<glib.h>
 #include<stdio.h>
@@ -24,7 +27,7 @@ gboolean generate_accelerometer_data(fakeObject *fake_obj)
   x_rand = g_rand_new();
   y_rand = g_rand_new();
   freq_rand = g_rand_new();
-  count =count - 1;
+  count--;
 
   if(count >0 && count <=duration)
     {
