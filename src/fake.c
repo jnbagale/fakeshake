@@ -16,7 +16,7 @@ fakeObject *make_fake_object(void)
 
 void free_fake_object(fakeObject *fake_obj)
 {
-  g_free(fake_obj->frequency);
+  g_free(fake_obj->freq_type);
   g_free(fake_obj->size);
   g_free(fake_obj);
 
