@@ -14,6 +14,7 @@
 
 
 #include "fake.h"
+#include "comms.h"
 #include "fakeaccel.h"
 #include "config.h"
 
@@ -24,8 +25,16 @@ gboolean is_shaking(fakeObject *fake_obj, gdouble *covariance)
 {
   
   *covariance = gsl_stats_covariance(fake_obj->x_values, 1, fake_obj->y_values, 1, SAMPLE_SIZE);
-  g_print("covariance: %g\n", *covariance);
-  return TRUE;
+  //g_print("covariance: %g\n", *covariance);
+  if (*covariance > 1) {
+    return TRUE;
+  }
+  else if(*covariance < -1){
+    return TRUE;
+  }
+  else {
+    return FALSE;   
+  }
 }
 
 
@@ -41,11 +50,11 @@ gboolean generate_accelerometer_data(fakeObject *fake_obj)
   /* gint ret; */	
   /* gint x; */
   /* gint y; */
-  gint range;
+  gint range = 5;
   gint duration = 500;
   gint sample_count = 0;
 
-  g_print("Type %s Freq %d Size %s Count %d \n",fake_obj->freq_type, fake_obj->freq_value, fake_obj->size, fake_obj->count);
+  //g_print("Type %s Freq %d Size %s Count %d \n",fake_obj->freq_type, fake_obj->freq_value, fake_obj->size, fake_obj->count);
   while(sample_count < SAMPLE_SIZE)
     {
       
@@ -123,7 +132,7 @@ void process_data(fakeObject *fake_obj)
 
   if (is_shaking(fake_obj, &covariance)) {
     gchar *message = g_strdup_printf("%g", covariance);
-    //g_print("%s\n", message);
+    g_print("%s\n", message);
     write_message(fake_obj, message);
     g_free(message); 
   }  
