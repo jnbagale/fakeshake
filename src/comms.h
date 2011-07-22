@@ -39,6 +39,8 @@
 
 #include "fake.h"
 
+gboolean get_network_info(fakeObject *fake_obj);
+gint read_message(fakeObject *fake_obj);
 gint write_message(fakeObject *fake_obj, gchar *msg);
 
 #endif /*COMMS_H_*/

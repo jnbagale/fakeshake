@@ -17,6 +17,7 @@
 #include <stdlib.h>
 
 #include "fake.h"
+#include "comms.h"
 #include "fakeaccel.h"
 #include "config.h"
 
@@ -101,7 +102,8 @@ int main ( int argc, char *argv[] )
   }
 
   g_timeout_add(FAKE_GEN_FREQ, (GSourceFunc)generate_accelerometer_data,(gpointer)fake_obj);
- 
+  g_timeout_add(1000, (GSourceFunc)get_network_info,(gpointer)fake_obj);
+
   g_main_loop_run(mainloop);
 
   return EXIT_FAILURE;

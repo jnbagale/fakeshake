@@ -43,18 +43,10 @@ gboolean generate_accelerometer_data(fakeObject *fake_obj)
   GRand *x_rand;
   GRand *y_rand;
   GRand *freq_rand;
-  /* gchar *val1; */
-  /* gchar *val2; */
-  /* gchar *val; */
-  /* gint fd; */
-  /* gint ret; */	
-  /* gint x; */
-  /* gint y; */
   gint range = 5;
   gint duration = 500;
   gint sample_count = 0;
 
-  //g_print("Type %s Freq %d Size %s Count %d \n",fake_obj->freq_type, fake_obj->freq_value, fake_obj->size, fake_obj->count);
   while(sample_count < SAMPLE_SIZE)
     {
       
@@ -86,41 +78,20 @@ gboolean generate_accelerometer_data(fakeObject *fake_obj)
 	  else
 	    {
 	      fake_obj->count = g_rand_int_range(freq_rand,1000,5000);
-	      //g_print("New Quake Frequency :%d\n",fake_obj->count);
 	    }
 	}
-      // Generating random numbers   
+
+      /* Generating random numbers    */
       fake_obj->x_values[sample_count] = g_rand_int_range(x_rand,0,range);
       fake_obj->y_values[sample_count] = g_rand_int_range(y_rand,0,range);
-      sample_count++;
-      
-      //g_print("x %f, y %f \n",fake_obj->x_values[sample_count],fake_obj->y_values[sample_count]);
+
+      /*  write_to_file( fake_obj->x_values[sample_count],fake_obj->y_values[sample_count]); */
+      /* g_print("x %f, y %f \n",fake_obj->x_values[sample_count],fake_obj->y_values[sample_count]); */
       g_free(x_rand);
       g_free(y_rand);
       g_free(freq_rand);
+      sample_count++;
 
-      /* val1 = g_strdup_printf ("%d",x); */
-      /* val2 = g_strdup_printf ("%d",y); */
-      /* val =  g_strdup_printf("(%s,%s)",val1,val2); */
- 
-      /* fd = open(FAKE_POSITION_FILE,O_WRONLY); */
-      /* if( fd < 0){ */
-      /*   g_printerr("failed to open the file %s!\n",FAKE_POSITION_FILE); */
-      /*   exit(EXIT_FAILURE); */
-      /* } */
-
-      /* ret = write(fd, val, BUFLEN); */
-      /* if( ret < 0){ */
-      /*   g_printerr("failed to write data !\n"); */
-      /*   exit(EXIT_FAILURE); */
-      /* } */
-
-      /* close(fd); */
-      /* g_print("%s\n",val); */
-
-      /* g_free(val1); */
-      /* g_free(val2);	 */
-      /* g_free(val); */
     }
   process_data(fake_obj);
   return TRUE;
@@ -136,4 +107,36 @@ void process_data(fakeObject *fake_obj)
     write_message(fake_obj, message);
     g_free(message); 
   }  
+}
+
+void write_to_file(int x, int y)
+{
+  gchar *val1;
+  gchar *val2;
+  gchar *val;
+  gint fd;
+  gint ret;	
+
+  val1 = g_strdup_printf ("%d",x);
+  val2 = g_strdup_printf ("%d",y);
+  val =  g_strdup_printf("(%s,%s)",val1,val2);
+ 
+  fd = open(FAKE_POSITION_FILE,O_WRONLY);
+  if( fd < 0){
+    g_printerr("failed to open the file %s!\n",FAKE_POSITION_FILE);
+    exit(EXIT_FAILURE);
+  }
+
+  ret = write(fd, val, BUFLEN);
+  if( ret < 0){
+    g_printerr("failed to write data !\n");
+    exit(EXIT_FAILURE);
+  }
+
+  close(fd);
+  g_print("%s\n",val);
+
+  g_free(val1);
+  g_free(val2);
+  g_free(val);
 }

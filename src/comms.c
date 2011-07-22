@@ -46,6 +46,83 @@
 #include "config.h"
 
 
+gboolean get_network_info(fakeObject *fake_obj)
+{
+  if(SP_poll(fake_obj->mbox)>0)
+    read_message(fake_obj);
+
+  return TRUE;
+}
+
+
+gint read_message(fakeObject *fake_obj)
+{
+
+  static char mess[102400];
+  char sender[MAX_GROUP_NAME];
+  char target_groups[100][MAX_GROUP_NAME];
+  int num_groups;
+  membership_info memb_info;
+  int service_type;
+  short mess_type;
+  int endian_mismatch;
+  int i;
+  int ret;
+
+//  printf("\n============================\n");
+  service_type = 0;
+  ret = SP_receive(fake_obj->mbox, &service_type, sender, 100, &num_groups, target_groups, 
+                    &mess_type, &endian_mismatch, sizeof(mess), mess);
+  if( ret < 0 ) 
+  {
+    SP_error( ret );
+    exit(0);
+  }
+
+  if( Is_regular_mess( service_type ) )
+  {
+    /* A regular message, sent by one of the processes */
+    mess[ret] = 0;
+//    if     ( Is_unreliable_mess( service_type ) ) printf("received UNRELIABLE ");
+//    else if( Is_reliable_mess(   service_type ) ) printf("received RELIABLE ");
+//    else if( Is_fifo_mess(       service_type ) ) printf("received FIFO ");
+//    else if( Is_causal_mess(     service_type ) ) printf("received CAUSAL ");
+//    else if( Is_agreed_mess(     service_type ) ) printf("received AGREED ");
+//    else if( Is_safe_mess(       service_type ) ) printf("received SAFE ");
+//    printf("message from %s of type %d (endian %d), to %d groups \n(%d bytes): %s\n",
+//      sender, mess_type, endian_mismatch, num_groups, ret, mess );
+      
+
+  } else if( Is_membership_mess( service_type ) ){
+    /* A membership notification */
+                ret = SP_get_memb_info( mess, service_type, &memb_info );
+                if (ret < 0) {
+                        printf("BUG: membership message does not have valid body\n");
+                        SP_error( ret );
+                        exit( 1 );
+                }
+    if     ( Is_reg_memb_mess( service_type ) )
+    {
+      printf("received REGULAR membership ");
+      if( Is_caused_join_mess( service_type ) ) printf("caused by JOIN of %s ",memb_info.changed_member);
+      if( Is_caused_leave_mess( service_type ) ) printf("caused by LEAVE of %s",memb_info.changed_member);
+      if( Is_caused_disconnect_mess( service_type ) ) {
+	printf("caused by DISCONNECT of %s",memb_info.changed_member);
+      }
+      printf("for group %s with %d members:\n",
+        sender, num_groups );
+      for( i=0; i < num_groups; i++ )
+        printf("\t%s\n", &target_groups[i][0] );
+      printf("grp id is %d %d %d\n",memb_info.gid.id[0], memb_info.gid.id[1], memb_info.gid.id[2] );
+    }else if( Is_transition_mess(   service_type ) ) {
+      printf("received TRANSITIONAL membership for group %s\n", sender );
+    }else if( Is_caused_leave_mess( service_type ) ){
+      printf("received membership message that left group %s\n", sender );
+    }else printf("received incorrect membership message of type %d\n", service_type );
+  }else printf("received message of unknown message type %d with %d bytes\n", service_type, ret);
+  return( service_type );
+}
+
 
 gint write_message(fakeObject *fake_obj, gchar *msg)
 {

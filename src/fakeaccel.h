@@ -42,5 +42,6 @@
 gboolean is_shaking(fakeObject *fake_obj, gdouble *covariance);
 gboolean generate_accelerometer_data(fakeObject *fake_obj);
 void process_data(fakeObject *fake_obj);
+void write_to_file(int x, int y);
 
 #endif /*FAKEACCEL_H_*/
