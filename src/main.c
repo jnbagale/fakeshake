@@ -70,7 +70,7 @@ int main ( int argc, char *argv[] )
   uuid_generate_random(buf);
   uuid_unparse(buf, id);
  // generate a hash of a unique id
-  user_hash = g_compute_checksum_for_string(G_CHECKSUM_MD5, id, sizeof(id));
+  user_hash = g_compute_checksum_for_string(G_CHECKSUM_MD5, id, strlen(id));
   // format needed by spread
   spread_server = g_strdup_printf("%d@%s", port, host);
   // returns an id for this connection in private_group and set mbox
@@ -84,7 +84,7 @@ int main ( int argc, char *argv[] )
   g_free(user_hash);
   
   // generate a hash of the group name
-  group_hash = g_compute_checksum_for_string(G_CHECKSUM_MD5, group, sizeof(group));
+  group_hash = g_compute_checksum_for_string(G_CHECKSUM_MD5, group, strlen(group));
   // 32 len strings don't seem to work so this is a fix
   group_name_fix = g_strndup(group_hash, 31);
   g_free(group_hash);
