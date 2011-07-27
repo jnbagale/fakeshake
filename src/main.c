@@ -14,6 +14,7 @@
 #include <glib.h>
 #include <uuid.h>
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 
 #include "fake.h"
