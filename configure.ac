@@ -14,7 +14,7 @@ AC_DEFINE([DEFAULT_QUAKE_SIZE],["medium"],["the default shake intensity value"])
 
 
 # Fake data generator settings
-AC_DEFINE([FAKE_GEN_FREQ],[10],["Writing rate of fake accelerometer data in milliseconds"])
+AC_DEFINE([FAKE_GEN_FREQ],[100],["Writing rate of fake accelerometer data in milliseconds"])
 AC_DEFINE([FAKE_POSITION_FILE],["fakeposition.txt"],["Fake accelerometer"])
 AC_DEFINE([SAMPLE_SIZE],[100],["Number of fake accelerometer samples allowed"])
 
