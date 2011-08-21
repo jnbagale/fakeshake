@@ -36,17 +36,19 @@ int main ( int argc, char *argv[] )
   gchar *group = DEFAULT_GROUP;
   gchar *host = DEFAULT_HOST;
   gint port = DEFAULT_PORT;
-  gchar *freqtype = DEFAULT_FREQ_TYPE;
-  gint freqvalue = DEFAULT_FREQ_VALUE;
-  gchar *size = DEFAULT_QUAKE_SIZE;
+  gchar *type = DEFAULT_FREQUENCY_TYPE;
+  gint frequency = DEFAULT_FREQUENCY_VALUE;
+  gint samplesize = DEFAULT_SAMPLE_SIZE;
+  gchar *sampletype = DEFAULT_SAMPLE_TYPE;
   gchar *spread_server;
   fakeObject *fake_obj = NULL;
   
   GOptionEntry entries [] =
   {
-    { "type", 'f', 0, G_OPTION_ARG_STRING, &freqtype, "Quake Frequency type: Fixed or Random ", NULL},
-    { "value", 'v', 0, G_OPTION_ARG_INT, &freqvalue, "Quake Frequency value", NULL},
-    { "size", 's', 0, G_OPTION_ARG_STRING, &size, "Quake size: Low, Medium or High", NULL}, 
+    { "type", 't', 0, G_OPTION_ARG_STRING, &type, "Fake data frequency type: fixed or random ", NULL},
+    { "frequency", 'f', 0, G_OPTION_ARG_INT, &frequency, "Fake data generation frequency", NULL},
+    { "samplesize", 'n', 0, G_OPTION_ARG_INT, &samplesize, "Number of samples per cycle to be sent", NULL},
+    { "sampletype", 's', 0, G_OPTION_ARG_STRING, &sampletype, "Samples type: fixed or random", NULL},
     { "group", 'g', 0, G_OPTION_ARG_STRING, &group, "Spread group", NULL },
     { "host", 'h', 0, G_OPTION_ARG_STRING, &host, "Spread host", NULL },
     { "port", 'p', 0, G_OPTION_ARG_INT, &port, "Spread port", "N" },
@@ -63,10 +65,11 @@ int main ( int argc, char *argv[] )
   
   fake_obj = make_fake_object();
 
-  fake_obj->freq_type = g_strdup(freqtype);
-  fake_obj->freq_value = freqvalue;
-  fake_obj->size = g_strdup(size);
-  fake_obj->count = freqvalue;
+  fake_obj->type = g_strdup(type);
+  fake_obj->frequency = frequency;
+  fake_obj->samplesize = samplesize;
+  fake_obj->sampletype = g_strdup(sampletype);
+  fake_obj->frequency_counter = frequency;
   
   uuid_generate_random(buf);
   uuid_unparse(buf, id);
@@ -103,7 +106,7 @@ int main ( int argc, char *argv[] )
   }
 
   g_timeout_add(FAKE_GEN_FREQ, (GSourceFunc)generate_accelerometer_data,(gpointer)fake_obj);
-  g_timeout_add(1000, (GSourceFunc)get_network_info,(gpointer)fake_obj);
+  g_timeout_add(DEFAULT_NETWORK_FREQ, (GSourceFunc)get_network_info,(gpointer)fake_obj);
 
   g_main_loop_run(mainloop);
 

@@ -8,14 +8,14 @@
 
 typedef struct {
   mailbox mbox;
-  gchar *size;
-  gchar *freq_type; 
+  gchar *type; 
   gchar *group_name;
   gchar private_group[MAX_GROUP_NAME];
-  gint freq_value;
-  gint count;
-  gdouble x_values[SAMPLE_SIZE];
-  gdouble y_values[SAMPLE_SIZE];
+  gchar *sampletype;
+  gint frequency_counter;
+  gint message_counter;
+  gint frequency;
+  gint samplesize;
 }fakeObject;
 
 
