@@ -12,6 +12,7 @@
 
 #include <sp.h>
 #include <glib.h>
+#include <glib/gthread.h>
 #include <uuid.h>
 #include <stdio.h>
 #include <string.h>
@@ -62,7 +63,9 @@ int main ( int argc, char *argv[] )
     g_printerr("option parsing failed: %s\n", error->message);
     exit (EXIT_FAILURE);
   }
-  
+
+  g_thread_init(NULL);
+
   fake_obj = make_fake_object();
 
   fake_obj->type = g_strdup(type);
@@ -105,8 +108,15 @@ int main ( int argc, char *argv[] )
     exit(EXIT_FAILURE);
   }
 
-  g_timeout_add(FAKE_GEN_FREQ, (GSourceFunc)generate_accelerometer_data,(gpointer)fake_obj);
-  g_timeout_add(DEFAULT_NETWORK_FREQ, (GSourceFunc)get_network_info,(gpointer)fake_obj);
+  if( g_thread_create( (GThreadFunc) get_network_info, (gpointer) fake_obj, FALSE, &error) == NULL) {
+      g_printerr("option parsing failed1: %s\n", error->message);
+  exit (EXIT_FAILURE);
+}
+ 
+ if( g_thread_create( (GThreadFunc) generate_accelerometer_data, (gpointer) fake_obj, FALSE, &error) == NULL ) {
+      g_printerr("option parsing failed 2: %s\n", error->message);
+  exit (EXIT_FAILURE);
+}
 
   g_main_loop_run(mainloop);
 

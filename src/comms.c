@@ -48,10 +48,13 @@
 
 gboolean get_network_info(fakeObject *fake_obj)
 {
-  if(SP_poll(fake_obj->mbox)>0)
-    read_message(fake_obj);
+  while(1) 
+    {
+      read_message(fake_obj);
+      g_usleep(10);
+    }  
 
-  return TRUE;
+return TRUE;
 }
 
 
