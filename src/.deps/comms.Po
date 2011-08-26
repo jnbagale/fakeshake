@@ -73,7 +73,7 @@ comms.o: comms.c /usr/local/include/sp.h /usr/local/include/sp_events.h \
  /usr/include/bits/select.h /usr/include/sys/sysmacros.h \
  /usr/include/alloca.h /usr/include/bits/stdlib.h /usr/include/string.h \
  /usr/include/bits/string.h /usr/include/bits/string2.h \
- /usr/include/bits/string3.h fake.h config.h comms.h
+ /usr/include/bits/string3.h fake.h config.h fake_spread.h comms.h
 
 /usr/local/include/sp.h:
 
@@ -320,5 +320,7 @@ comms.o: comms.c /usr/local/include/sp.h /usr/local/include/sp_events.h \
 fake.h:
 
 config.h:
+
+fake_spread.h:
 
 comms.h:

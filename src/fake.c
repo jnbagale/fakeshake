@@ -4,6 +4,7 @@
 #include "fake.h"
 #include "config.h"
 
+
 fakeObject *make_fake_object(void)
 {
   fakeObject *fake_obj;

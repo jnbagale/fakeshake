@@ -42,6 +42,7 @@
 
 
 #include "fake.h"
+#include "fake_spread.h"
 #include "comms.h"
 #include "config.h"
 
@@ -71,15 +72,29 @@ gint read_message(fakeObject *fake_obj)
   int endian_mismatch;
   int i;
   int ret;
-
-//  printf("\n============================\n");
+  //printf("\n============================\n");
   service_type = 0;
   ret = SP_receive(fake_obj->mbox, &service_type, sender, 100, &num_groups, target_groups, 
                     &mess_type, &endian_mismatch, sizeof(mess), mess);
-  if( ret < 0 ) 
-  {
+  if(ret == -18) {
     SP_error( ret );
-    exit(0);
+    printf("Mail box error!\n");
+    /* Reconnecting to spread and joining the group */
+    connect_to_spread(fake_obj);
+  } else if(ret == -8) {
+    SP_error( ret );
+    printf("Spread disconnected you!\n");
+
+  } else if(ret == -11) {
+    SP_error( ret );
+    printf("You Disconnected!\n");
+
+  }
+
+  if( ret < 0 )
+  {
+    //SP_error( ret );
+    //exit(0);
   }
 
   if( Is_regular_mess( service_type ) )
@@ -121,8 +136,11 @@ gint read_message(fakeObject *fake_obj)
       printf("received TRANSITIONAL membership for group %s\n", sender );
     }else if( Is_caused_leave_mess( service_type ) ){
       printf("received membership message that left group %s\n", sender );
-    }else printf("received incorrect membership message of type %d\n", service_type );
-  }else printf("received message of unknown message type %d with %d bytes\n", service_type, ret);
+    }
+   else printf("received incorrect membership message of type %d\n", service_type );
+  }
+
+else printf("received message of unknown message type %d with %d bytes\n", service_type, ret);
   return( service_type );
 }
 

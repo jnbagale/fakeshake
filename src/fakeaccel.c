@@ -46,7 +46,7 @@ gboolean generate_accelerometer_data(fakeObject *fake_obj)
       }
 
       fake_obj->frequency_counter--;
-      /* 100 ms delay to send controlled messages per cycle */
+      /* (100000) = 100 ms delay to send controlled messages per cycle */
       g_usleep(100000);
     }
   return TRUE;

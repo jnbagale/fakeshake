@@ -56,7 +56,7 @@ int main ( int argc, char *argv[] )
     { NULL}
   };
 
- context = g_option_context_new ("- the fake shake generator");
+ context = g_option_context_new ("- the fake shake data generator");
   g_option_context_add_main_entries (context, entries, PACKAGE_NAME);
   
   if (!g_option_context_parse (context, &argc, &argv, &error)) {

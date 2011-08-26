@@ -47,8 +47,8 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(fakeshakedir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_fakeshake_OBJECTS = main.$(OBJEXT) fakeaccel.$(OBJEXT) \
-	fake.$(OBJEXT) comms.$(OBJEXT)
+am_fakeshake_OBJECTS = main.$(OBJEXT) fake.$(OBJEXT) \
+	fakeaccel.$(OBJEXT) fake_spread.$(OBJEXT) comms.$(OBJEXT)
 fakeshake_OBJECTS = $(am_fakeshake_OBJECTS)
 am__DEPENDENCIES_1 =
 fakeshake_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -186,7 +186,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 INCLUDES = -Wall $(GLIB_CFLAGS) $(GTHREAD_CFLAGS) $(UUID_CFLAGS) $(GSL_CFLAGS)
-fakeshake_SOURCES = main.c fakeaccel.c fakeaccel.h fake.c fake.h comms.c comms.h config.h
+fakeshake_SOURCES = main.c fake.c fake.h fakeaccel.c fakeaccel.h  fake_spread.c fake_spread.h comms.c comms.h config.h
 fakeshake_LDADD = $(GLIB_LIBS) $(GTHREAD_LIBS) $(UUID_LIBS) $(GSL_LIBS)
 fakeshake_DATA = 
 fakeshakedir = 
@@ -291,6 +291,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/comms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fake.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fake_spread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fakeaccel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 
