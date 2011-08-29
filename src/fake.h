@@ -7,8 +7,12 @@
 #include "config.h"
 
 typedef struct {
-  mailbox mbox;
-  gchar *type; 
+  mailbox mbox[1000];
+  gint mbox_counter;
+  gchar *type;
+  gchar *group;
+  gchar *host;
+  gint port;
   gchar *group_name;
   gchar private_group[MAX_GROUP_NAME];
   gchar *sampletype;
@@ -22,4 +26,4 @@ typedef struct {
 fakeObject *make_fake_object(void);
 void free_fake_object(fakeObject *fake_obj);
 
-#endif
+#endif /*FAKE_H_*/

@@ -13,6 +13,7 @@ fakeObject *make_fake_object(void)
       exit(EXIT_FAILURE);
       }
   fake_obj->message_counter = 0;
+  fake_obj->mbox_counter = 0;
   return fake_obj;
 }
 
@@ -20,6 +21,8 @@ void free_fake_object(fakeObject *fake_obj)
 {
   g_free(fake_obj->type);
   g_free(fake_obj->sampletype);
+  g_free(fake_obj->group);
+  g_free(fake_obj->host); 
   g_free(fake_obj);
 }
 

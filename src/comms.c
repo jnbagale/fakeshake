@@ -40,7 +40,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 #include "fake.h"
 #include "fake_spread.h"
 #include "comms.h"
@@ -74,28 +73,33 @@ gint read_message(fakeObject *fake_obj)
   int ret;
   //printf("\n============================\n");
   service_type = 0;
-  ret = SP_receive(fake_obj->mbox, &service_type, sender, 100, &num_groups, target_groups, 
+  ret = SP_receive(fake_obj->mbox[fake_obj->mbox_counter], &service_type, sender, 100, &num_groups, target_groups, 
                     &mess_type, &endian_mismatch, sizeof(mess), mess);
   if(ret == -18) {
     SP_error( ret );
     printf("Mail box error!\n");
     /* Reconnecting to spread and joining the group */
+    /* Wait 1 second before trying to reconnect */
+    g_usleep(1000000);
     connect_to_spread(fake_obj);
   } else if(ret == -8) {
     SP_error( ret );
     printf("Spread disconnected you!\n");
-
+    /* Reconnecting to spread and joining the group */
+    /* Wait 10 seconds before trying to reconnect */
+    g_usleep(10000000);
+    connect_to_spread(fake_obj);
   } else if(ret == -11) {
     SP_error( ret );
     printf("You Disconnected!\n");
 
   }
 
-  if( ret < 0 )
-  {
-    //SP_error( ret );
-    //exit(0);
-  }
+  /* if( ret < 0 ) */
+  /* { */
+  /*   SP_error( ret ); */
+  /*   exit(0); */
+  /* } */
 
   if( Is_regular_mess( service_type ) )
   {
@@ -152,7 +156,7 @@ gint write_message(fakeObject *fake_obj, gchar *msg)
    
   msg_len = strlen(msg);
  
-  ret = SP_multicast(fake_obj->mbox, UNRELIABLE_MESS, fake_obj->group_name, 1, msg_len, msg);
+  ret = SP_multicast(fake_obj->mbox[fake_obj->mbox_counter], UNRELIABLE_MESS, fake_obj->group_name, 1, msg_len, msg);
   
   return(ret);  
   
