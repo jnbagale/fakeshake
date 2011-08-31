@@ -56,7 +56,7 @@ void process_data(fakeObject *fake_obj)
 {
  
     gchar *message = g_strdup_printf("%s", "seven");
-    //g_print("Message number %d sent to the network\n",fake_obj->message_counter);
+    g_print("Message number %d sent to the network\n",fake_obj->message_counter);
     write_message(fake_obj, message);
     g_free(message); 
 

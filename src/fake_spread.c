@@ -18,7 +18,6 @@ fakeObject *connect_spread(fakeObject *fake_obj,gint mbox_counter)
   gchar *group_hash;
   gchar *group_name_fix;
 
-
   uuid_generate_random(buf);
   uuid_unparse(buf, id);
  // generate a hash of a unique id
@@ -27,14 +26,20 @@ fakeObject *connect_spread(fakeObject *fake_obj,gint mbox_counter)
   spread_server = g_strdup_printf("%d@%s", fake_obj->port, fake_obj->host);
   // returns an id for this connection in private_group and set mbox
   ret = SP_connect(spread_server, user_hash, 0, 1, &(fake_obj->mbox[mbox_counter]), fake_obj->private_group);
- 
-  if( ret < 0 ) 
-  {
-    SP_error( ret );
-    exit(0);
-  }
+
   g_free(spread_server);
   g_free(user_hash);
+
+  if(ret == ACCEPT_SESSION) {
+    g_print("Successfully connected to %d@%s as %s\n",fake_obj->port, fake_obj->host, fake_obj->private_group);
+  }
+  else {
+    SP_error(ret);
+    /* wait 30 seconds and try to reconnect to spread */
+    g_print("Trying to reconnect to spread in 30 seconds...\n");
+    g_usleep(30000000);
+    connect_spread(fake_obj, mbox_counter);
+  }
  
   // generate a hash of the group name
   group_hash = g_compute_checksum_for_string(G_CHECKSUM_MD5, fake_obj->group, strlen(fake_obj->group));
@@ -48,10 +53,50 @@ fakeObject *connect_spread(fakeObject *fake_obj,gint mbox_counter)
   return fake_obj;
 } 
 
+fakeObject *disconnect_spread(fakeObject *fake_obj, gint mbox_counter)
+{
+  gint ret;
+
+ ret = SP_disconnect( fake_obj->mbox[mbox_counter]);
+ 
+ if(ret == 0) {
+   g_print("Successfully disconnected from %d@%s\n", fake_obj->port, fake_obj->host);
+ }
+ else {
+   SP_error(ret);
+ }
+
+ return fake_obj;
+}
+
 fakeObject *join_spread(fakeObject *fake_obj, gint mbox_counter)
 {
-  
-  SP_join( fake_obj->mbox[mbox_counter], fake_obj->group_name );
+  gint ret;
+
+  ret = SP_join( fake_obj->mbox[mbox_counter], fake_obj->group_name );
+
+  if(ret == 0) {
+    g_print("Successfully joined group: %s\n",fake_obj->group_name);
+  }
+  else {
+    SP_error(ret);
+  }
+
+  return fake_obj;
+}
+
+fakeObject *leave_spread(fakeObject *fake_obj, gint mbox_counter)
+{
+  gint ret;
+
+  ret = SP_leave( fake_obj->mbox[mbox_counter], fake_obj->group_name );
+ 
+  if(ret == 0) {
+    g_print("Successfully left group: %s\n",fake_obj->group_name);
+  }
+  else {
+    SP_error(ret);
+  }
 
   return fake_obj;
 }

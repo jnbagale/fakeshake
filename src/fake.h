@@ -22,7 +22,6 @@ typedef struct {
   gint samplesize;
 }fakeObject;
 
-
 fakeObject *make_fake_object(void);
 void free_fake_object(fakeObject *fake_obj);
 

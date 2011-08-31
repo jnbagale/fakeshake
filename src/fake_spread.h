@@ -4,7 +4,9 @@
 #include "fake.h"
 #include "config.h"
 
-fakeObject *connect_spread (fakeObject *fake_obj,  gint mbox_counter);
-fakeObject *join_spread(fakeObject *fake_obj,  gint mbox_counter);
+fakeObject *connect_spread(fakeObject *fake_obj,gint mbox_counter);
+fakeObject *disconnect_spread(fakeObject *fake_obj, gint mbox_counter);
+fakeObject *join_spread(fakeObject *fake_obj, gint mbox_counter);
+fakeObject *leave_spread(fakeObject *fake_obj, gint mbox_counter);
 
 #endif /*FAKE_SPREAD_H_*/

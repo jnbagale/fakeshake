@@ -36,7 +36,7 @@ int main ( int argc, char *argv[] )
   gchar *host = DEFAULT_HOST;
   gint port = DEFAULT_PORT;
   gint client = DEFAULT_CLIENT_NO;
-  gint count;
+  guint count;
 
   fakeObject *fake_obj = NULL;
   
@@ -65,15 +65,16 @@ int main ( int argc, char *argv[] )
 
   fake_obj = make_fake_object();
 
-  fake_obj->group = g_strdup(group);
+  /* fake_obj-> host, type, group and sampletype need to be freed later */
   fake_obj->host = g_strdup(host);
+  fake_obj->type = g_strdup(type);
+  fake_obj->group = g_strdup(group);
+  fake_obj->sampletype = g_strdup(sampletype);
+
   fake_obj->port = port;
   fake_obj->client = client;
-
-  fake_obj->type = g_strdup(type);
   fake_obj->frequency = frequency;
   fake_obj->samplesize = samplesize;
-  fake_obj->sampletype = g_strdup(sampletype);
   fake_obj->frequency_counter = frequency;
   
   for(count = 0; count < fake_obj->client; count++)
@@ -81,22 +82,22 @@ int main ( int argc, char *argv[] )
       connect_spread(fake_obj, count);
       /* join_spread(fake_obj, count); */
     }
+
   mainloop = g_main_loop_new(NULL, FALSE);
   if (mainloop == NULL) {
     g_printerr("Couldn't create GMainLoop\n");
     exit(EXIT_FAILURE);
   }
-
  
-      /* if( g_thread_create( (GThreadFunc) get_network_info, (gpointer) fake_obj, FALSE, &error) == NULL) { */
-      /* 	g_printerr("option parsing failed1: %s\n", error->message); */
-      /* 	exit (EXIT_FAILURE); */
-      /* } */
+  /* if( g_thread_create( (GThreadFunc) get_network_info, (gpointer) fake_obj, FALSE, &error) == NULL) { */
+  /* 	g_printerr("option parsing failed 1: %s\n", error->message); */
+  /* 	exit (EXIT_FAILURE); */
+  /* } */
 
-      if( g_thread_create( (GThreadFunc) generate_accelerometer_data, (gpointer) fake_obj, FALSE, &error) == NULL ) {
-      	g_printerr("option parsing failed 2: %s\n", error->message);
-      	exit (EXIT_FAILURE);
-      }
+  if( g_thread_create( (GThreadFunc) generate_accelerometer_data, (gpointer) fake_obj, FALSE, &error) == NULL ) {
+    g_printerr("option parsing failed 2: %s\n", error->message);
+    exit (EXIT_FAILURE);
+  }
 
   g_main_loop_run(mainloop);
 
