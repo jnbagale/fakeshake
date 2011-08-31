@@ -7,8 +7,8 @@
 #include "config.h"
 
 typedef struct {
-  mailbox mbox[1000];
-  gint mbox_counter;
+  mailbox mbox[2560];
+  gint client;
   gchar *type;
   gchar *group;
   gchar *host;

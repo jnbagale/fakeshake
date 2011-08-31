@@ -48,9 +48,15 @@
 
 gboolean get_network_info(fakeObject *fake_obj)
 {
+  guint count;
+
   while(1) 
     {
-      read_message(fake_obj);
+      for(count =0; count < fake_obj->client; count++)
+	{
+	  read_message(fake_obj, count);
+	  g_usleep(10);
+	}
       g_usleep(10);
     }  
 
@@ -58,12 +64,13 @@ return TRUE;
 }
 
 
-gint read_message(fakeObject *fake_obj)
+gint read_message(fakeObject *fake_obj, gint mbox_counter)
 {
 
   static char mess[102400];
   char sender[MAX_GROUP_NAME];
-  char target_groups[100][MAX_GROUP_NAME];
+  int max_groups = 5000;
+  char target_groups[max_groups][MAX_GROUP_NAME];
   int num_groups;
   membership_info memb_info;
   int service_type;
@@ -73,33 +80,30 @@ gint read_message(fakeObject *fake_obj)
   int ret;
   //printf("\n============================\n");
   service_type = 0;
-  ret = SP_receive(fake_obj->mbox[fake_obj->mbox_counter], &service_type, sender, 100, &num_groups, target_groups, 
+  ret = SP_receive(fake_obj->mbox[mbox_counter], &service_type, sender, max_groups, &num_groups, target_groups, 
                     &mess_type, &endian_mismatch, sizeof(mess), mess);
-  if(ret == -18) {
+  if(ret == NET_ERROR_ON_SESSION) {
     SP_error( ret );
     printf("Mail box error!\n");
     /* Reconnecting to spread and joining the group */
     /* Wait 1 second before trying to reconnect */
     g_usleep(1000000);
-    connect_to_spread(fake_obj);
-  } else if(ret == -8) {
+    connect_spread(fake_obj, mbox_counter);
+  } else if(ret == CONNECTION_CLOSED) {
     SP_error( ret );
     printf("Spread disconnected you!\n");
     /* Reconnecting to spread and joining the group */
     /* Wait 10 seconds before trying to reconnect */
     g_usleep(10000000);
-    connect_to_spread(fake_obj);
-  } else if(ret == -11) {
+    connect_spread(fake_obj, mbox_counter);
+  } else if(ret == ILLEGAL_SESSION) {
     SP_error( ret );
     printf("You Disconnected!\n");
 
+  } else {
+    SP_error( ret );
+    exit(0);
   }
-
-  /* if( ret < 0 ) */
-  /* { */
-  /*   SP_error( ret ); */
-  /*   exit(0); */
-  /* } */
 
   if( Is_regular_mess( service_type ) )
   {
@@ -133,8 +137,8 @@ gint read_message(fakeObject *fake_obj)
       }
       printf("for group %s with %d members:\n",
         sender, num_groups );
-      for( i=0; i < num_groups; i++ )
-        printf("\t%s\n", &target_groups[i][0] );
+      /* for( i=0; i < num_groups; i++ ) */
+      /*   printf("\t%s\n", &target_groups[i][0] ); */
       printf("grp id is %d %d %d\n",memb_info.gid.id[0], memb_info.gid.id[1], memb_info.gid.id[2] );
     }else if( Is_transition_mess(   service_type ) ) {
       printf("received TRANSITIONAL membership for group %s\n", sender );
@@ -153,10 +157,15 @@ gint write_message(fakeObject *fake_obj, gchar *msg)
 {
   gint ret;
   guint msg_len;
-   
-  msg_len = strlen(msg);
+  guint mbox_counter;
+
+  for(mbox_counter =0; mbox_counter < fake_obj->client; mbox_counter++)
+    {
+      msg_len = strlen(msg);
  
-  ret = SP_multicast(fake_obj->mbox[fake_obj->mbox_counter], UNRELIABLE_MESS, fake_obj->group_name, 1, msg_len, msg);
+      ret = SP_multicast(fake_obj->mbox[mbox_counter], UNRELIABLE_MESS, fake_obj->group_name, 1, msg_len, msg);
+      g_usleep(10);
+    }
   
   return(ret);  
   

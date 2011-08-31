@@ -35,6 +35,7 @@ int main ( int argc, char *argv[] )
   gchar *group = DEFAULT_GROUP;
   gchar *host = DEFAULT_HOST;
   gint port = DEFAULT_PORT;
+  gint client = DEFAULT_CLIENT_NO;
   gint count;
 
   fakeObject *fake_obj = NULL;
@@ -45,6 +46,7 @@ int main ( int argc, char *argv[] )
     { "frequency", 'f', 0, G_OPTION_ARG_INT, &frequency, "Fake data generation frequency", NULL},
     { "samplesize", 'n', 0, G_OPTION_ARG_INT, &samplesize, "Number of samples per cycle to be sent", NULL},
     { "sampletype", 's', 0, G_OPTION_ARG_STRING, &sampletype, "Samples type: fixed or random", NULL},
+    { "client", 'c', 0, G_OPTION_ARG_INT, &client, "Number of fakeshake clients", NULL },
     { "group", 'g', 0, G_OPTION_ARG_STRING, &group, "Spread group", NULL },
     { "host", 'h', 0, G_OPTION_ARG_STRING, &host, "Spread host", NULL },
     { "port", 'p', 0, G_OPTION_ARG_INT, &port, "Spread port", "N" },
@@ -66,41 +68,35 @@ int main ( int argc, char *argv[] )
   fake_obj->group = g_strdup(group);
   fake_obj->host = g_strdup(host);
   fake_obj->port = port;
+  fake_obj->client = client;
 
   fake_obj->type = g_strdup(type);
   fake_obj->frequency = frequency;
   fake_obj->samplesize = samplesize;
   fake_obj->sampletype = g_strdup(sampletype);
   fake_obj->frequency_counter = frequency;
-
-  for(count = 0; count < 128; count++)
+  
+  for(count = 0; count < fake_obj->client; count++)
     {
-      connect_to_spread(fake_obj);
+      connect_spread(fake_obj, count);
+      /* join_spread(fake_obj, count); */
     }
-
   mainloop = g_main_loop_new(NULL, FALSE);
   if (mainloop == NULL) {
     g_printerr("Couldn't create GMainLoop\n");
     exit(EXIT_FAILURE);
   }
 
-  for(count = 0; count < 128; count++)
-    {
-      fake_obj->mbox_counter = count;
-      if( g_thread_create( (GThreadFunc) get_network_info, (gpointer) fake_obj, FALSE, &error) == NULL) {
-	g_printerr("option parsing failed1: %s\n", error->message);
-	exit (EXIT_FAILURE);
-      }
-    }
+ 
+      /* if( g_thread_create( (GThreadFunc) get_network_info, (gpointer) fake_obj, FALSE, &error) == NULL) { */
+      /* 	g_printerr("option parsing failed1: %s\n", error->message); */
+      /* 	exit (EXIT_FAILURE); */
+      /* } */
 
-  for(count = 0; count < 128; count++)
-    { 
-      fake_obj->mbox_counter = count;
       if( g_thread_create( (GThreadFunc) generate_accelerometer_data, (gpointer) fake_obj, FALSE, &error) == NULL ) {
-	g_printerr("option parsing failed 2: %s\n", error->message);
-	exit (EXIT_FAILURE);
+      	g_printerr("option parsing failed 2: %s\n", error->message);
+      	exit (EXIT_FAILURE);
       }
-    }
 
   g_main_loop_run(mainloop);
 

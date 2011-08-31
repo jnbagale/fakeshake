@@ -13,7 +13,7 @@ fakeObject *make_fake_object(void)
       exit(EXIT_FAILURE);
       }
   fake_obj->message_counter = 0;
-  fake_obj->mbox_counter = 0;
+
   return fake_obj;
 }
 
