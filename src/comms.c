@@ -45,6 +45,14 @@
 #include "comms.h"
 #include "config.h"
 
+static gint msg_sent_per_sec = 0;
+
+gboolean process_all_data(fakeObject *fake_obj)
+{
+  g_print("total messages sent in approx one sec = %d\n",msg_sent_per_sec);
+  msg_sent_per_sec = 0;
+  return TRUE;
+}
 
 gboolean get_network_info(fakeObject *fake_obj)
 {
@@ -154,6 +162,11 @@ gint write_message(fakeObject *fake_obj, gchar *msg)
 
       if(ret >= 0) {
 	/* g_print("Successfully multicasted message to %s\n", fake_obj->group_name); */
+	fake_obj->message_counter++;
+	//g_print("Message number %d sent to the network\n",fake_obj->message_counter);   
+	msg_sent_per_sec++;
+
+
       }
       else {
 	SP_error(ret);
@@ -162,18 +175,8 @@ gint write_message(fakeObject *fake_obj, gchar *msg)
 	g_usleep(10000000);
 	connect_spread(fake_obj, mbox_counter);
       }
-
-      /* if(fake_obj->message_counter > 1000) { */
-      /* 	disconnect_spread(fake_obj, mbox_counter); */
-      /* } */
-
       g_usleep(10);
-
     }
-  /* if(fake_obj->message_counter > 1000) { */
-  /*   exit(0); */
-  /* } */
-  
   /* return (ret); */
   return 0;  
 }

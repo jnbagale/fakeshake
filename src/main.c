@@ -99,6 +99,8 @@ int main ( int argc, char *argv[] )
     exit (EXIT_FAILURE);
   }
 
+  g_timeout_add(1000, (GSourceFunc)process_all_data, (gpointer)fake_obj);
+
   g_main_loop_run(mainloop);
 
   return EXIT_FAILURE;
