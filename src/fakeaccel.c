@@ -1,8 +1,14 @@
-/* Fake accelerometer data generator */
-/* Jiva N. Bagale */
-/* jnbagale@gmail.com  */
-/* 2010 */
+/* Copyright (C) 2009-2011 Jiva Nath Bagale */
 
+/* This program is free software: you can redistribute it and/or modify */
+/* it under the terms of the GNU General Public License as published by */
+/* the Free Software Foundation, either version 3 of the License, or */
+/* (at your option) any later version. */
+
+/* This program is distributed in the hope that it will be useful, */
+/* but WITHOUT ANY WARRANTY; without even the implied warranty of */
+/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the */
+/* GNU General Public License for more details. */
 
 
 #include <glib.h>
@@ -36,7 +42,7 @@ gboolean generate_accelerometer_data(fakeObject *fake_obj)
 	else  {
 	  /*Random fake data frequency generation*/
 	  freq_rand = g_rand_new();
-	  fake_obj->frequency_counter = g_rand_int_range(freq_rand,15,50);
+	  fake_obj->frequency_counter = g_rand_int_range(freq_rand,150,300);
 	  g_free(freq_rand);
 	}
       }

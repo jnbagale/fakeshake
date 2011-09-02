@@ -12,7 +12,7 @@ AC_DEFINE([DEFAULT_GROUP],["world"],["the group everyone can join"])
 
 AC_DEFINE([DEFAULT_CLIENT_NO],[100],["the default number of fakeshake clients"])
 AC_DEFINE([DEFAULT_FREQUENCY_TYPE],["random"],["the dafult fake data generation type"])
-AC_DEFINE([DEFAULT_FREQUENCY_VALUE],[20],["the default fake data generation frequency"])
+AC_DEFINE([DEFAULT_FREQUENCY_VALUE],[200],["the default fake data generation frequency"])
 AC_DEFINE([DEFAULT_SAMPLE_SIZE],[7],["the default number of samples per cycle "])
 AC_DEFINE([DEFAULT_SAMPLE_TYPE],["random"],["the default sample type"])
 AC_DEFINE([DEFAULT_NETWORK_FREQ],[10],["the default network message pull frequency"])

@@ -49,7 +49,7 @@ static gint msg_sent_per_sec = 0;
 
 gboolean process_all_data(fakeObject *fake_obj)
 {
-  g_print("total messages sent in approx one sec = %d\n",msg_sent_per_sec);
+  g_print("%d messages sent\n",msg_sent_per_sec);
   msg_sent_per_sec = 0;
   return TRUE;
 }
