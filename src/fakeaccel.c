@@ -16,7 +16,7 @@
 #include <string.h>
 
 #include "fake.h"
-#include "comms.h"
+#include "publisher.h"
 #include "fakeaccel.h"
 #include "config.h"
 
@@ -59,9 +59,11 @@ gboolean generate_accelerometer_data(fakeObject *fake_obj)
 
 void process_data(fakeObject *fake_obj)
 {
- 
-    gchar *message = g_strdup_printf("%s", "seven");
-    write_message(fake_obj, message);
-    g_free(message); 
-
+  gint count;
+  for(count = 0; count < fake_obj->client ; count ++)
+    {
+      gchar *message = g_strdup_printf("%s", "100");
+      send_data(fake_obj, message, count);
+      g_free(message); 
+    }
 }

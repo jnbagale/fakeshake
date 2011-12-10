@@ -13,14 +13,14 @@
 
 #include <glib.h>
 #include <glib/gthread.h>
+#include <uuid.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 #include "fake.h"
-#include "comms.h"
+#include "publisher.h"
 #include "fakeaccel.h"
-#include "fake_spread.h"
 #include "config.h"
 
 int main ( int argc, char *argv[] )
@@ -28,6 +28,10 @@ int main ( int argc, char *argv[] )
   GError *error;
   GMainLoop *mainloop;
   GOptionContext *context;
+  uuid_t buf;
+  gchar id[36];
+  gchar *user_hash;
+  gchar *group_hash;
   gchar *type = DEFAULT_FREQUENCY_TYPE;
   gint frequency = DEFAULT_FREQUENCY_VALUE;
   gint samplesize = DEFAULT_SAMPLE_SIZE;
@@ -49,7 +53,7 @@ int main ( int argc, char *argv[] )
     { "client", 'c', 0, G_OPTION_ARG_INT, &client, "Number of fakeshake clients", NULL },
     { "group", 'g', 0, G_OPTION_ARG_STRING, &group, "Spread group", NULL },
     { "host", 'h', 0, G_OPTION_ARG_STRING, &host, "Spread host", NULL },
-    { "port", 'p', 0, G_OPTION_ARG_INT, &port, "Spread port", "N" },
+    { "port", 'p', 0, G_OPTION_ARG_INT, &port, "ZeroMQ host's publishing port", NULL },
     { NULL}
   };
 
@@ -71,16 +75,31 @@ int main ( int argc, char *argv[] )
   fake_obj->group = g_strdup(group);
   fake_obj->sampletype = g_strdup(sampletype);
 
-  fake_obj->port = port;
+  fake_obj->pub_obj.pubport = port;
   fake_obj->client = client;
   fake_obj->frequency = frequency;
   fake_obj->samplesize = samplesize;
   fake_obj->frequency_counter = frequency;
   
+  uuid_generate_random(buf);
+  uuid_unparse(buf, id);
+  // generate a hash of a unique id
+  user_hash = g_compute_checksum_for_string(G_CHECKSUM_MD5, id, strlen(id));
+
+  // generate a hash of the group name
+  group_hash = g_compute_checksum_for_string(G_CHECKSUM_MD5, group, strlen(group));
+  
+  fake_obj->group_hash = g_strdup_printf("%s", group_hash);
+  fake_obj->user_hash =  g_strdup_printf("%s", user_hash);
+    // freeing unused strings
+
+  g_free(user_hash);
+  g_free(group_hash);
+
   for(count = 0; count < fake_obj->client; count++)
     {
-      connect_spread(fake_obj, count);
-      /* join_spread(fake_obj, count); */
+      /* Connect to forwarder as both publisher and subscriber */
+      fake_obj = publish_forwarder(fake_obj, count);
     }
 
   mainloop = g_main_loop_new(NULL, FALSE);
@@ -89,17 +108,10 @@ int main ( int argc, char *argv[] )
     exit(EXIT_FAILURE);
   }
  
-  /* if( g_thread_create( (GThreadFunc) get_network_info, (gpointer) fake_obj, FALSE, &error) == NULL) { */
-  /* 	g_printerr("option parsing failed 1: %s\n", error->message); */
-  /* 	exit (EXIT_FAILURE); */
-  /* } */
-
   if( g_thread_create( (GThreadFunc) generate_accelerometer_data, (gpointer) fake_obj, FALSE, &error) == NULL ) {
     g_printerr("option parsing failed 2: %s\n", error->message);
     exit (EXIT_FAILURE);
   }
-
-  g_timeout_add(1000, (GSourceFunc)process_all_data, (gpointer)fake_obj);
 
   g_main_loop_run(mainloop);
 

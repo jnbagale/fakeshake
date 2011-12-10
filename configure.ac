@@ -4,8 +4,8 @@ AC_CONFIG_SRCDIR([src/])
 AM_CONFIG_HEADER([src/config.h])
 
 AC_DEFINE([PROGNAME],["fakeshake"],["the fake shake data generator"])
-AC_DEFINE([DEFAULT_HOST],["theclashingrocks.org"],["the default spread server"])
-AC_DEFINE([DEFAULT_PORT],[4803],["the default spread server port"])
+AC_DEFINE([DEFAULT_HOST],["10.48.128.32"],["the default zeromq host"])
+AC_DEFINE([DEFAULT_PORT],[5556],["the default zeromq host port"])
 AC_DEFINE([DEFAULT_GROUP],["world"],["the group everyone can join"])
 
 # Fake data generator settings
@@ -42,11 +42,6 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 
-
-# Check for spread library and header
-AC_CHECK_LIB(spread, SP_connect, , AC_MSG_ERROR(*** libspread not found))
-AC_CHECK_HEADERS(sp.h)
-
 # check for glib
 PKG_CHECK_MODULES(GLIB, [glib-2.0])
 
@@ -56,8 +51,11 @@ PKG_CHECK_MODULES(GTHREAD, [gthread-2.0] )
 # check for UUID
 PKG_CHECK_MODULES(UUID, [uuid])
 
-# check for SDL
+# check for GSL
 PKG_CHECK_MODULES(GSL, [gsl])
+
+# check for ZEROMQ
+PKG_CHECK_MODULES(LIBZMQ, [libzmq])
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 
