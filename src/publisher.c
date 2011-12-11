@@ -35,10 +35,12 @@ void send_data(fakeObject *fake_obj, gchar *message, gint count)
   
     // Send message to all subscribers of group: world
     char *update;
+    gchar *user_hash_fix;
+    user_hash_fix = g_strdup_printf("%s%d",fake_obj->user_hash, count);
     //sprintf (update,"%s %s %s", message, fake_obj->user_hash, fake_obj->group_hash);
-    update = g_strdup_printf("%s %s %s",fake_obj->group_hash, fake_obj->user_hash, message);
+    update = g_strdup_printf("%s %s %s",fake_obj->group_hash, user_hash_fix, message);
     z_send (fake_obj->pub_obj.publisher[count], update); 
-    g_print("Sent :%s\n",update);
+    //g_print("Sent :%s\n",update);
     g_free(update);
 }
 
