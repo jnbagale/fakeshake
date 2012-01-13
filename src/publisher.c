@@ -40,7 +40,7 @@ void send_data(fakeObject *fake_obj, gchar *message, gint count)
     //sprintf (update,"%s %s %s", message, fake_obj->user_hash, fake_obj->group_hash);
     update = g_strdup_printf("%s %s %s",fake_obj->group_hash, user_hash_fix, message);
     z_send (fake_obj->pub_obj.publisher[count], update); 
-    //g_print("Sent :%s\n",update);
+    //g_print("Sent %s of size %d bytes\n",update, strlen(update));
     g_free(update);
     g_free(user_hash_fix);
 }

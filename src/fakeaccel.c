@@ -62,7 +62,7 @@ void process_data(fakeObject *fake_obj)
   gint count;
   for(count = 0; count < fake_obj->client ; count ++)
     {
-      gchar *message = g_strdup_printf("%s", "100");
+      gchar *message = g_strdup_printf("%s", "a");
       send_data(fake_obj, message, count);
       g_free(message); 
     }
