@@ -60,7 +60,7 @@ gboolean generate_accelerometer_data(fakeObject *fake_obj)
 void process_data(fakeObject *fake_obj)
 {
  
-    gchar *message = g_strdup_printf("%s", "seven");
+    gchar *message = g_strdup_printf("%s", "a");
     write_message(fake_obj, message);
     g_free(message); 
 
